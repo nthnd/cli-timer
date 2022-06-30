@@ -22,6 +22,7 @@ def updateTime():
 def main(stdscr):
     curses.curs_set(0)
     stdscr.nodelay(True)
+
     while True:
         try: 
             key = stdscr.getkey()
@@ -34,17 +35,21 @@ def main(stdscr):
         stdscr.clear()
         stdscr.border()
         (maxY, maxX) = stdscr.getmaxyx()
+        winWidth = 24
+        winHeight = 10
+        win = curses.newwin(winHeight, winWidth, maxY//2 - winHeight//2, maxX//2 - winWidth//2)
 
-        stdscr.addstr(maxY//2 - 2, maxX//2 - 1 , str(seconds).zfill(2), curses.A_BOLD)
-        stdscr.addstr(maxY//2, maxX//2-11, '[                      ]')
-        stdscr.addstr(maxY//2, maxX//2-10, seconds//3*' ', curses.A_REVERSE)
+
+        win.addstr(winHeight//2 - 2, winWidth//2 - 1 , str(seconds).zfill(2), curses.A_BOLD)
+        win.addstr(winHeight//2, winWidth//2-11, '[                    ]')
+        win.addstr(winHeight//2, winWidth//2-10, (seconds//3 + 1)*' ', curses.A_REVERSE)
         minutesMessage = 'Minutes : ' + str(minutes).zfill(2)
         hoursMessage = 'Hours : ' + str(hours).zfill(2)
-        stdscr.addstr(maxY//2 + 2, maxX//2 - len(minutesMessage)//2, minutesMessage)
-        stdscr.addstr(maxY//2 + 3, maxX//2 - len(hoursMessage)//2, hoursMessage)
-        stdscr.addstr(maxY-2, maxX//2 - 7, "Press q to quit")
+        win.addstr(winHeight//2 + 2, winWidth//2 - len(minutesMessage)//2, minutesMessage)
+        win.addstr(winHeight//2 + 3, winWidth//2 - len(hoursMessage)//2, hoursMessage)
 
-        stdscr.refresh()
+        stdscr.addstr(maxY-2, maxX//2 - 7, "Press q to quit")
+        win.refresh()
         time.sleep(1)
         updateTime()
 
