@@ -20,6 +20,7 @@ def updateTime():
         minutes = 0
 
 def main(stdscr):
+    global seconds, minutes, hours
     curses.curs_set(0)
     stdscr.nodelay(True)
 
@@ -30,6 +31,10 @@ def main(stdscr):
             key = None
         if key == 'q':
             break
+        elif key == 'r':
+            seconds = 0
+            minutes = 0
+            hours = 0
         
         
         stdscr.clear()
@@ -47,8 +52,8 @@ def main(stdscr):
         hoursMessage = 'Hours : ' + str(hours).zfill(2)
         win.addstr(winHeight//2 + 2, winWidth//2 - len(minutesMessage)//2, minutesMessage)
         win.addstr(winHeight//2 + 3, winWidth//2 - len(hoursMessage)//2, hoursMessage)
-
-        stdscr.addstr(maxY-2, maxX//2 - 7, "Press q to quit")
+        footerMessage = "\'q\' : quit\t\'r\' : restart"
+        stdscr.addstr(maxY-2, maxX//2 - len(footerMessage)//2, footerMessage)
         win.refresh()
         time.sleep(1)
         updateTime()
