@@ -2,14 +2,14 @@
 import traceback
 import curses
 from curses import wrapper
-
+import time
 seconds = 0
 minutes = 0
 hours = 0
 
-def update(stdscr):
+def update(window):
     updateTime()
-    updateScreen(stdscr)
+    updateScreen(window)
 
 def updateTime():
     global seconds, minutes, hours
@@ -21,22 +21,40 @@ def updateTime():
         minutes = 0
         hours += 1
 
-def updateScreen(stdscr):
+def updateScreen(window):
     global seconds
-    stdscr.clear()
-    stdscr.addstr((seconds//3 + 1)*' ', curses.A_REVERSE)
-    stdscr.refresh()
+    window.clear()
+    window.border()
 
-def main(stdscr):
+    (maxY, maxX) = window.getmaxyx()
+
+    window.addstr(maxY//2 - 2 ,maxX//2 - 3, ':    :', curses.A_BLINK)
+    
+    window.addstr(maxY//2 - 2 ,maxX//2 - 6,str(hours).zfill(2), curses.A_DIM)
+    window.addstr(maxY//2 - 2 ,maxX//2 - 1,str(minutes).zfill(2),)
+    window.addstr(maxY//2 - 2 ,maxX//2 + 4,str(seconds).zfill(2), curses.A_BOLD)
+
+    window.addstr(maxY//2,maxX//2 - 11,'|' + 20*' ' + '|', curses.A_BOLD)
+    window.addstr(maxY//2,maxX//2 - 10,(seconds//3 + 1)*' ', curses.A_REVERSE)
+    
+
+    window.refresh()
+
+def resetTimer():
+    global seconds, minutes, hours
+    seconds, minutes, hours = 0, 0, 0
+
+def main(window):
     global seconds, minutes, hours
     curses.curs_set(0)
-    stdscr.nodelay(True)
-    try: 
-        ch = ''
-        while ch != ord('q'):
-            update(stdscr)
-            stdscr.timeout(1000)
-            ch = stdscr.getch()
-    except: 
-        traceback.print_exc()
+    window.nodelay(True)
+    ch = ''
+    while True:
+        update(window)
+        curses.napms(1000)
+        ch = window.getch()
+        if ch == ord('r'):
+            resetTimer()
+        elif ch == ord('q'):
+            break
 wrapper(main)
